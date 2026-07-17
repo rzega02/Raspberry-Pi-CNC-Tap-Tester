@@ -2,401 +2,394 @@
 
 # PiModal CNC - CNC Tap Test Analyzer for Raspberry Pi
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Python 3.7+](https://img.shields.io/badge/Python-3.7+-green.svg)](https://www.python.org/downloads/)
+[![Raspberry Pi 4B](https://img.shields.io/badge/Raspberry_Pi-4B-red.svg)](https://www.raspberrypi.org/)
+
 A low-cost CNC machine resonance and chatter analysis system built using a Raspberry Pi 4 and MPU-6050 accelerometer.
 
-The project allows CNC machinists, manufacturing engineers, and hobbyists to perform machine-tool tap testing, identify vibration frequencies, estimate damping ratios, and generate spindle-speed avoidance recommendations using inexpensive hardware.
-<img width="700" height="1200" alt="tap_20260622_163222" src="https://github.com/user-attachments/assets/f3cec547-9b3d-4b5c-9b97-6190cb24440b" />
-<img width="1500" height="750" alt="tap_20260622_163222_avoid_chart" src="https://github.com/user-attachments/assets/41d3616d-a029-4636-bed0-38aebea43cee" />
-Sample Summary:
-File: tap_20260622_163222.csv (Duration ~7.999 s, Fs ~333.3 Hz)
-Axis X: Peak ~26.8 Hz (RMS 0.941 g, damping zeta 0.0600, method logdec)
-  Half-power check: f1 ~26.7 Hz, f2 ~26.9 Hz, bandwidth ~0.2 Hz
-Axis Y: Peak ~62.7 Hz (RMS 0.770 g, damping zeta 0.1102, method logdec)
-  Half-power check: f1 ~62.6 Hz, f2 ~62.8 Hz, bandwidth ~0.2 Hz
-Axis Z: Peak ~80.9 Hz (RMS 0.450 g, damping zeta 0.0846, method logdec)
-  Half-power check: f1 ~80.8 Hz, f2 ~81.2 Hz, bandwidth ~0.4 Hz
-Primary chatter axis selected: Axis X (lowest significant flexible mode at ~26.8 Hz)
-Recommendation: Avoid speeds causing ~27 Hz vibration.
-(For a 2-flute tool, ~803 RPM may excite this mode.)
-Estimated damping ratio on primary axis: zeta ~0.0600
-Avoid-these-speeds chart saved to: tap_20260622_163222_avoid_chart.png
-
-
+The project allows CNC machinists, manufacturing engineers, and hobbyists to perform machine-tool tap testing, identify vibration frequencies, estimate damping ratios, and generate spindle-speed avoidance recommendations.
 
 ---
 
-# Overview
+## 🚀 Quick Start (5 Minutes)
 
-Machine chatter remains one of the most common productivity and quality problems in CNC machining.
+Get up and running in minutes:
 
-Commercial modal analysis and tap-testing systems often cost several thousand dollars.
+```bash
+# 1. Clone the repository
+git clone https://github.com/rzega02/PiModal-CNC---Raspberry-Pi-CNC-Tap-Tester.git
+cd PiModal-CNC---Raspberry-Pi-CNC-Tap-Tester
 
-This project demonstrates how a Raspberry Pi 4B and a low-cost MPU-6050 accelerometer can be used to perform:
+# 2. Create virtual environment
+python3 -m venv env
+source env/bin/activate
 
-- Impact (tap) testing
-- FFT vibration analysis
-- Resonance identification
-- Damping ratio estimation
-- Chatter-axis identification
-- RPM avoidance chart generation
+# 3. Install dependencies
+pip install -r requirements.txt
 
-The goal is to provide actionable spindle-speed recommendations based on measured tool dynamics instead of trial-and-error testing.
+# 4. Verify hardware connection
+i2cdetect -y 1
+# Should show "68" in the output
+
+# 5. Run the program
+python tap_test.py
+```
+
+**Next:** Press **Enter** to start a tap test, tap your tool with a hammer, and get instant vibration analysis! 
+
+For detailed setup instructions, see [INSTALLATION.md](INSTALLATION.md).
 
 ---
 
-# Features
+## 📊 Real-World Example
+
+Here's actual data from a CNC spindle with a 2-flute endmill:
+
+**Test Data File:** `tap_20260622_163222.csv`  
+**Duration:** ~4.0 seconds of vibration capture  
+**Sample Rate:** ~333 Hz
+
+### Analysis Results
+
+| Axis | Peak Frequency | RMS Level | Damping Ratio (ζ) | Interpretation |
+|------|---|---|---|---|
+| **X** | 26.8 Hz | 0.941 g | 0.0600 | **Primary chatter mode** (lowest = worst) |
+| Y | 62.7 Hz | 0.770 g | 0.1102 | Secondary mode |
+| Z | 80.9 Hz | 0.450 g | 0.0846 | Higher frequency mode |
+
+### Recommendation
+
+**Avoid speeds causing ~27 Hz vibration:**
+- For a 2-flute tool: ~**803 RPM** excites this mode
+- Better choices: >1000 RPM or <600 RPM
+- Use the generated avoidance chart to select safe speeds
+
+**Generated Outputs:**
+- ✅ FFT spectrum plots (PNG)
+- ✅ RPM avoidance chart (PNG)
+- ✅ Analysis summary (TXT)
+- ✅ Raw data (CSV)
+
+<img width="700" height="1200" alt="FFT Spectrum" src="https://github.com/user-attachments/assets/f3cec547-9b3d-4b5c-9b97-6190cb24440b" />
+
+<img width="1500" height="750" alt="RPM Avoidance Chart" src="https://github.com/user-attachments/assets/41d3616d-a029-4636-bed0-38aebea43cee" />
+
+---
+
+## 📷 Hardware Assembly
+
+### Complete System Cost: ~$75
+
+Your accelerometer is mounted directly on the spindle or tool holder for accurate measurements.
+
+### Wiring
+
+```
+MPU-6050 Pin → Raspberry Pi GPIO
+─────────────────────────────────
+VCC        → 3.3V (Pin 1)
+GND        → GND (Pin 6, 9, 14, 20, 25, 30, 34, 39)
+SDA (GPIO2)  → Pin 3
+SCL (GPIO3)  → Pin 5
+INT (Optional) → Pin 7 (GPIO 4)
+```
+
+**See [INSTALLATION.md](INSTALLATION.md#hardware-setup) for complete wiring diagrams and assembly instructions.**
+
+---
+
+## ✨ Features
 
 Current capabilities include:
 
-✅ Raspberry Pi 4B platform
-
-✅ MPU-6050 3-axis accelerometer
-
-✅ Real-time vibration capture
-
-✅ CSV data logging
-
-✅ FFT spectrum analysis
-
-✅ RMS vibration calculations
-
-✅ Automatic dominant frequency detection
-
-✅ Logarithmic decrement damping calculations
-
-✅ Half-power bandwidth damping estimation
-
-✅ Automatic chatter-axis selection
-
-✅ Spectrum plot generation
-
-✅ RPM avoidance chart generation
-
-✅ Automatic report creation
-
-✅ Headless operation support
+✅ **Raspberry Pi 4B platform**  
+✅ **MPU-6050 3-axis accelerometer**  
+✅ **Real-time vibration capture**  
+✅ **CSV data logging**  
+✅ **FFT spectrum analysis with windowing**  
+✅ **RMS vibration calculations**  
+✅ **Automatic dominant frequency detection**  
+✅ **Logarithmic decrement damping calculations**  
+✅ **Half-power bandwidth damping estimation**  
+✅ **Automatic chatter-axis selection**  
+✅ **Spectrum plot generation (PNG)**  
+✅ **RPM avoidance chart generation**  
+✅ **Automatic report creation (TXT)**  
+✅ **Headless operation support**  
 
 ---
 
-# Example Output
+## 📋 Requirements
 
-Typical output:
+### Hardware
 
-Axis X: Peak ~160 Hz
-Axis Y: Peak ~47 Hz
-Axis Z: Peak ~99 Hz
+| Component | Approx Cost | Purpose |
+|-----------|---|---|
+| Raspberry Pi 4B | $50 | Main processor |
+| MPU-6050 Accelerometer | $5 | 3-axis vibration sensor |
+| MicroSD Card | $10 | OS storage |
+| USB Power Supply | $10 | Power delivery |
+| Mounting Hardware | $5 | Accelerometer mounting |
+| **Total** | **~$75** | **Complete system** |
 
-Primary chatter axis: Y
+### Software
 
-Recommendation:
-Avoid speeds causing ~47 Hz vibration.
-
-For a 2 flute cutter:
-
-Critical RPM ≈ 1417 RPM
-
-The program also generates:
-
-- FFT Spectrum Plot
-- RPM Avoidance Chart
-- Text Summary Report
+- **OS:** Raspberry Pi OS Bullseye (or newer)
+- **Python:** 3.7+
+- **Dependencies:** See [requirements.txt](requirements.txt)
 
 ---
 
-# Hardware Requirements
+## 🔧 Installation
 
-## Required Components
-
-| Component | Approximate Cost |
-|------------|-------------|
-| Raspberry Pi 4B | $50 |
-| MPU-6050 Accelerometer | $5 |
-| MicroSD Card | $10 |
-| Mounting Hardware | $10 |
-| Impact Hammer | Existing Shop Tool |
-
-Estimated total cost:
-
-~ $75
-
----
-
-# Wiring Diagram
-
-MPU-6050 → Raspberry Pi
-
-VCC → 3.3V
-
-GND → GND
-
-SDA → GPIO2 (SDA)
-
-SCL → GPIO3 (SCL)
-
-I2C must be enabled in Raspberry Pi Configuration.
-
----
-
-# Software Requirements
-
-## Operating System
-
-Tested on:
-
-Raspberry Pi OS Bullseye
-
----
-
-## Python Version
-
-Python 3.x
-
----
-
-## Required Packages
+### Option 1: Quick Installation (Recommended)
 
 ```bash
-pip install mpu6050-raspberrypi numpy matplotlib
+git clone https://github.com/rzega02/PiModal-CNC---Raspberry-Pi-CNC-Tap-Tester.git
+cd PiModal-CNC---Raspberry-Pi-CNC-Tap-Tester
+python3 -m venv env && source env/bin/activate
+pip install -r requirements.txt
 ```
+
+### Option 2: Step-by-Step Installation
+
+See **[INSTALLATION.md](INSTALLATION.md)** for:
+- Detailed setup procedures
+- Hardware wiring diagrams
+- I2C configuration
+- Troubleshooting guide
+- Permission fixes
+- Display configuration
 
 ---
 
-# Setup Procedure
+## 📖 Using the Program
 
-## Create Python Virtual Environment
-
-```bash
-python3 -m venv ~/venvs/mpu6050-env
-```
-
-Activate:
-
-```bash
-source ~/venvs/mpu6050-env/bin/activate
-```
-
-Install dependencies:
-
-```bash
-pip install mpu6050-raspberrypi numpy matplotlib
-```
-
----
-
-# Running the Program
-
-Start the application:
+### Starting a Test
 
 ```bash
 python tap_test.py
 ```
 
-Follow the prompts:
+### Test Procedure
 
-1. Mount accelerometer.
-2. Tap tool or holder.
-3. Capture vibration data.
-4. View FFT results.
-5. View RPM avoidance chart.
+1. **Press Enter** to start data capture
+2. **Tap your tool** firmly with a hammer
+3. **Let it ring down** for 3-5 seconds
+4. **Press Y** to analyze the results
+5. **Enter number of flutes** (e.g., 2, 3, or 4)
+6. **View the results:**
+   - FFT spectrum plots
+   - RPM avoidance chart
+   - Analysis summary
 
----
-
-# Theory of Operation
-
-## Step 1 – Impact Excitation
-
-The cutter, holder, or machine structure is struck with a light tap.
-
-This excites the natural frequencies of the system.
-
----
-
-## Step 2 – Data Acquisition
-
-The MPU-6050 records vibration acceleration in:
-
-- X axis
-- Y axis
-- Z axis
-
-Acceleration data is stored in CSV format.
+See **[TESTING_GUIDE.md](TESTING_GUIDE.md)** for:
+- Proper tap procedure
+- Interpretation of results
+- Best practices
+- Troubleshooting common issues
+- Advanced testing techniques
 
 ---
 
-## Step 3 – Signal Conditioning
+## 🔬 How It Works
 
-The program:
+### Step 1: Impact Excitation
+The tool or holder is tapped with a hammer, exciting natural frequencies.
 
-- Removes DC offset
-- Applies a Hanning window
-- Prepares data for FFT analysis
+### Step 2: Data Acquisition
+The MPU-6050 records acceleration on three axes (X, Y, Z) and saves to CSV.
 
----
+### Step 3: Signal Conditioning
+- Remove DC offset
+- Apply Hanning window
+- Prepare for FFT
 
-## Step 4 – FFT Analysis
+### Step 4: FFT Analysis
+Fast Fourier Transform converts time-domain data to frequency-domain.
 
-The Fast Fourier Transform converts:
+### Step 5: Resonance Detection
+Identifies dominant frequencies and RMS vibration levels on each axis.
 
-Time Domain
+### Step 6: Damping Estimation
+Uses two methods:
+- **Logarithmic Decrement:** Analyzes free-decay oscillation peaks
+- **Half-Power Bandwidth:** Uses resonance peak width in FFT
 
-into
+### Step 7: Chatter Prediction
+Selects the lowest flexible mode (primary chatter driver) and calculates RPM avoidance zones:
 
-Frequency Domain
-
-allowing dominant vibration frequencies to be identified.
-
----
-
-## Step 5 – Resonance Detection
-
-The program identifies:
-
-- Dominant frequency
-- Dominant axis
-- RMS vibration level
-
-for each measurement axis.
+```
+Critical RPM = (Frequency × 60) / Number of Flutes
+```
 
 ---
 
-## Step 6 – Damping Estimation
+## 📚 Theory & Mathematics
 
-Two damping estimation methods are used:
+### RMS Vibration Level
+```
+RMS = √(Σx² / N)
+```
+Measures overall acceleration in g's.
+
+### FFT (Fast Fourier Transform)
+Converts acceleration from time domain to frequency domain.
 
 ### Logarithmic Decrement
+```
+δ = (1/n) × ln(x₁/xₙ)
+```
+Measures rate of amplitude decay in oscillations.
 
-Uses free-decay vibration peaks to estimate damping ratio.
+### Damping Ratio
+```
+ζ = δ / √(4π² + δ²)
+```
+Dimensionless measure of system damping (0 = undamped, 1 = critically damped).
 
-### Half-Power Bandwidth
-
-Uses resonance peak width in the FFT spectrum.
-
----
-
-## Step 7 – Chatter Prediction
-
-The lowest significant flexible mode is selected as the primary chatter mode.
-
-RPM avoidance zones are calculated from:
-
-RPM = (Frequency × 60) / Number of Flutes
-
----
-
-# Mathematical Background
-
-## RMS
-
-RMS vibration level:
-
-RMS = sqrt(sum(x²)/N)
-
----
-
-## FFT
-
-FFT converts acceleration data from the time domain to the frequency domain.
-
----
-
-## Logarithmic Decrement
-
-δ = (1/n) × ln(x1/xn)
-
----
-
-## Damping Ratio
-
-ζ = δ / sqrt(4π² + δ²)
-
----
-
-## Tooth Passing Frequency
-
+### Tooth Passing Frequency
+```
 TPF = RPM × Flutes / 60
+```
+When TPF matches a structural resonance, chatter occurs.
 
-When tooth passing frequency matches a structural resonance:
-
-Chatter may occur.
-
----
-
-# Example Use Cases
-
-This project may be useful for:
-
-- CNC Milling
-- CNC Turning
-- Toolholder Testing
-- Fixture Testing
-- Educational Modal Analysis
-- Manufacturing Engineering
-- Machine Dynamics Research
+For complete theory, see the [Technical Whitepaper](./Technical%20Whitepaper%20-%20CNC%20Tap%20Testing.pdf).
 
 ---
 
-# Known Limitations
+## 💡 Use Cases
 
-Current version does not create a full industrial Stability Lobe Diagram.
+This project is useful for:
 
-A complete SLD would require:
+- **CNC Milling:** Identify spindle speed limitations
+- **CNC Turning:** Characterize tool holder dynamics
+- **Toolholder Testing:** Compare different holders
+- **Fixture Testing:** Analyze workholding stiffness
+- **Educational Modal Analysis:** Learn vibration mechanics
+- **Manufacturing Engineering:** Optimize cutting parameters
+- **Machine Dynamics Research:** Baseline system characterization
 
+---
+
+## ⚠️ Known Limitations
+
+**Current version provides practical RPM avoidance guidance, not full industrial-grade analysis:**
+
+- ❌ No full Stability Lobe Diagram (simplified zones only)
+- ❌ Single-axis tap testing (no multi-axis FRF)
+- ❌ No instrumented hammer support
+- ❌ No cutting force integration
+- ❌ No phase information
+
+**To create a full Stability Lobe Diagram would require:**
 - Instrumented impact hammer
-- Frequency Response Function (FRF)
+- Frequency Response Function (FRF) analysis
 - Modal stiffness estimation
 - Cutting force coefficients
 
-Current implementation provides practical spindle-speed avoidance guidance.
+See [Future Enhancements](#-future-enhancements) for planned improvements.
 
 ---
 
-# Future Enhancements
+## 🔮 Future Enhancements
 
-Planned improvements:
+Planned improvements for future versions:
 
-- Instrumented hammer support
-- Full FRF analysis
-- Stability lobe generation
-- Touchscreen interface
-- Local web dashboard
-- Wireless sensor support
-- AI-assisted chatter detection
-- Machine database for tool libraries
-
----
-
-# Project Status
-
-Current Status:
-
-Working Prototype
-
-Validated on CNC machine tap tests.
+- [ ] Instrumented hammer support
+- [ ] Full Frequency Response Function (FRF) analysis
+- [ ] Complete Stability Lobe generation
+- [ ] Touchscreen interface for Raspberry Pi
+- [ ] Local web dashboard
+- [ ] Wireless sensor network support
+- [ ] Machine learning chatter detection
+- [ ] Tool library database
+- [ ] Integration with CNC control software
+- [ ] AI-assisted troubleshooting
 
 ---
 
-# Contributing
+## 🐛 Troubleshooting
 
-Suggestions, bug reports, and pull requests are welcome.
+### Quick Fixes
+
+**"I2C device not found"**
+```bash
+i2cdetect -y 1  # Should show "68" in output
+```
+Check wiring (GPIO2/GPIO3 pins).
+
+**"No module named mpu6050"**
+```bash
+source env/bin/activate
+pip install -r requirements.txt
+```
+
+**"Permission denied"**
+```bash
+sudo usermod -aG i2c $USER
+sudo usermod -aG gpio $USER
+newgrp i2c
+```
+
+For complete troubleshooting, see **[INSTALLATION.md#troubleshooting](INSTALLATION.md#troubleshooting)**.
 
 ---
 
-# License
+## 📝 Project Status
 
-MIT License
+**Status:** ✅ Working Prototype  
+**Last Updated:** 2026-07-17  
+**Validated on:** CNC machine tap tests with endmills and drills  
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
+
+---
+
+## 🤝 Contributing
+
+Suggestions, bug reports, and pull requests are welcome!
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ---
 
-# Author
+## 📄 License
 
-Robert Zega
-
-President
-
-Miyama USA, Inc
-
-Manufacturing Engineer and Raspberry Pi Enthusiast
-
-Louisville, Kentucky USA
+This project is licensed under the **MIT License** - see [LICENSE](LICENSE) file for details.
 
 ---
+
+## 👨‍💼 Author
+
+**Robert Zega**  
+President, Miyama USA, Inc.  
+Manufacturing Engineer and Raspberry Pi Enthusiast  
+Louisville, Kentucky USA  
+
+---
+
+## 📞 Support & Documentation
+
+- **Installation Guide:** [INSTALLATION.md](INSTALLATION.md)
+- **Testing Procedure:** [TESTING_GUIDE.md](TESTING_GUIDE.md)
+- **Version History:** [CHANGELOG.md](CHANGELOG.md)
+- **Issues & Discussions:** [GitHub Issues](https://github.com/rzega02/PiModal-CNC---Raspberry-Pi-CNC-Tap-Tester/issues)
+
+---
+
+## 🎯 Getting Started
+
+1. **Install:** Follow [INSTALLATION.md](INSTALLATION.md)
+2. **Learn:** Read [TESTING_GUIDE.md](TESTING_GUIDE.md)
+3. **Test:** Run `python tap_test.py`
+4. **Share:** Post your results!
+
+---
+
+**Happy tap testing! 🔧**
