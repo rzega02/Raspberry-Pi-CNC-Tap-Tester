@@ -16,12 +16,16 @@ This guide explains how to properly perform a tap test and interpret the results
 
 ### 1. Hardware Preparation
 
+<img width="896" height="1195" alt="Generated Image July 18, 2026 - 3_27AM" src="https://github.com/user-attachments/assets/ed3159db-4dae-419f-b05f-a24e9720565a" />
+This shows the hardware I use, small touch screen 7 inch monitor not included.  The device on very right is not needed, just the middle sensor.
+
 - ✓ Verify the MPU-6050 is **rigidly mounted** to the tool holder or spindle nose
 - ✓ Ensure all I2C wires are **secure and undamaged**
 - ✓ **Stop the spindle** completely (zero RPM)
 - ✓ Disable any automatic coolant or chip evacuation systems
 - ✓ Ensure the work area is **clear and safe**
 - ✓ Have an **impact hammer** ready (dead-blow hammer recommended)
+
 
 ### 2. Software Preparation
 
@@ -55,6 +59,8 @@ Note the orientation of your accelerometer:
 ---
 
 ## During Testing
+
+<img width="1260" height="832" alt="Generated Image July 18, 2026 - 3_26AM" src="https://github.com/user-attachments/assets/f6b3597b-7521-4a9e-bff1-f5f1f461258d" />
 
 ### Step 1: Position for Impact
 
