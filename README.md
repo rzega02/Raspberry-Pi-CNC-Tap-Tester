@@ -1,20 +1,18 @@
-<img width="1024" height="1024" alt="PiModal CNC Logo 2" src="https://github.com/user-attachments/assets/defb082a-190e-4cfb-8145-9e89a04a4d00" />
-
 # PiModal CNC - CNC Tap Test Analyzer for Raspberry Pi
+
+A low-cost CNC machine resonance and chatter analysis system built using a Raspberry Pi 4 and MPU-6050 accelerometer.
+
+<img width="1024" height="1024" alt="Generated Image July 18, 2026 - 3_18AM" src="https://github.com/user-attachments/assets/98e70e16-9dd0-4c10-995a-5ffae03e51b4" />
 
 [![License-Apache-2.0](https://img.shields.io/badge/Apache-2.0-grey?style=flat-square)](License)
 [![Python 3.7+](https://img.shields.io/badge/Python-3.7+-green.svg)](https://www.python.org/downloads/)
 [![Raspberry Pi 4B](https://img.shields.io/badge/Raspberry_Pi-4B-red.svg)](https://www.raspberrypi.org/)
 
-A low-cost CNC machine resonance and chatter analysis system built using a Raspberry Pi 4 and MPU-6050 accelerometer.
-
-The project allows CNC machinists, manufacturing engineers, and hobbyists to perform machine-tool tap testing, identify vibration frequencies, estimate damping ratios, and generate spindle-speed avoidance recommendations.
-
+The project allows CNC machinists, manufacturing engineers, and hobbyists to perform machine-tool tap testing, identify vibration frequencies, estimate damping ratios, and generate spindle-speed avoidance recommendations. In the picture the raspberry pi has a breakout board on it to make wiring easier and it also has a small 7 inch touch screen monitor on the front of it.  This is optional but a good idea for shop floor use.
 ---
-
 ## 🚀 Quick Start (5 Minutes)
 
-Get up and running in minutes:
+## Get up and running in minutes:
 
 ```bash
 # 1. Clone the repository
